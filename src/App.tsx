@@ -1,67 +1,31 @@
 import { useState } from "react";
-import Alert from "./components/Alert";
-import ListGroup from "./components/ListGroup"
-const items = [
-    {
-        "cityname":"Ahemdabad",
-        "type":"primary"
-    },
-    {
-        "cityname":"kochi",
-        "type":"secondary",
-    },
-    {
-        "cityname":"Bangalore",
-        "type":"success",
-    },
-    {
-        "cityname":"Mumbai",
-        "type":"danger",
-    },
-    {
-        "cityname":"Baroda",
-        "type":"warning",
-    }
-];
+import ExpenseList from "./components/expense-tracker/components/ExpenseList";
+import ExpenseFilter from "./components/expense-tracker/components/ExpenseFilter";
+import ExpenseForm from "./components/expense-tracker/components/ExpenseForm";
+import Categories from "./components/expense-tracker/categories";
+
 
  function App(){
-    const [selectedItemType, setSelectedItemType] = useState<{cityname:string,type:string} | null>(null)
-    const handleSelectedItemtype = (item: {cityname:string, type:string}) => {
-        setSelectedItemType(item)
-        setAlertVisiblity(true)
-    }
-    const [alertVisiblity, setAlertVisiblity] = useState(false)
-    const [tags, setTag] = useState(['a','b'])
-    const [customer, SetCustomer] = useState({
-        name: 'kajal',
-        address: {
-            city: 'Ahemdabad',
-            zipcode: 382416
-        }
-    })
-    //object updates
-    const handleClick = () => {
-        SetCustomer({
-            ...customer,
-            address:{...customer.address,zipcode: 367890}
-        })
-        //setTag([...tags, 'exciting']) // adding
-        //setTag(tags.filter(tag => tag !== 'a')) //remove 
-        //setTag(tags.map(tag => tag == 'a' ? 'abc' : tag)) //update the perticular tag value in array
-    }
+ const [selectedCategory, setSelectedCategory] = useState('')
+ const [expenses, setExpense] = useState([
+    {id:1, description: 'aaa', amount: 10, category: 'utilites'},
+    {id:2, description: 'bbb', amount: 10, category: 'utilites'},
+    {id:3, description: 'ccc', amount: 10, category: 'utilites'},
+    {id:4, description: 'ddd', amount: 10, category: 'utilites'},
+    {id:5, description: 'eee', amount: 10, category: 'utilites'},
+])
 
-    
+const visibleCategory = selectedCategory ? expenses.filter((e) => e.category === selectedCategory) : expenses
 
   return <>
-            {alertVisiblity && (
-                <Alert alertType={selectedItemType?.type} onClose={() => setAlertVisiblity(false)}><span>{selectedItemType?.cityname}</span></Alert>
-            )}
-            <ListGroup items={items} heading="Cities" onSelectItem={handleSelectedItemtype} /><br/> 
-            {customer.address.zipcode}
-            <br />
-            {tags}
-            <button onClick={handleClick}>Click Me!!</button>
-         </>
+  <div className="mb-5">
+      <ExpenseForm onSubmit={(expense) => setExpense([...expenses, {...expense ,id: expenses.length + 1}])} />
+  </div>
+    <div className="mb-3">
+        <ExpenseFilter onSelectCategory={(category)=> setSelectedCategory(category)} />
+    </div>
+    <ExpenseList expenses={visibleCategory}  onDelete={(id)=> setExpense(expenses.filter((e)=> e.id!== id))}/>
+  </>
  }
 
  export default App
